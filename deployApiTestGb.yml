@@ -1,9 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-api-back-svc
+  labels:
+    app: api-back
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: api-back
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-back
-spec: 
+  name: my-api-back
+  labels:
+    app: api-back
+spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: api-back
   template:
     metadata:
       labels:
@@ -16,26 +34,8 @@ spec:
         - containerPort: 80
         resources:
             requests:
-              cpu: "7.5"
+              cpu: "7"
             limits: 
               cpu: "8"
       imagePullSecrets:
       - name: api-cuestionarios
----
-apiVersion: v1
-kind: Service
-metadata:
- annotations: 
-       service.beta.kubernetes.io/azure-load-balancer-resource-group: PruebasCuestionario
- name: api-back
-spec:
- type: LoadBalancer
- selector:
-   app: api-back
- ports:
-   - name: client
-     protocol: TCP
-     port: 80
-     nodePort: 32084
- selector:
-   app: api-back
